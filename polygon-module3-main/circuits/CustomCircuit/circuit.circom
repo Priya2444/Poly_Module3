@@ -4,41 +4,36 @@ pragma circom 2.0.0;
 
 template CustomCircuit () {  
 
-  // signal inputs
-
+//signal inputs
    signal input a;
    signal input b;
 
-// signals from gates
+   // signals from gates
+    signal x;
+    signal y;
 
-   signal x;
-   signal y;
+   // final signal output
+    signal output q;
 
-// final signal output
+   // component gates used to create custom circuit
+    component andGate = AND();
+    component notGate = NOT();
+    component orGate = OR();
 
-   signal output q;
+   // circuit logic
+    andGate.a <== a;
+    andGate.b <== b;
+    x <== andGate.out;
 
-// component gates used to create custom circuit
+    notGate.in <== b;
+    y <== notGate.out;
 
-   component andGate = AND();
-   component notgate = NOT();
-   component norGate = NOR();
-
-// circuit logic
-
-   andGate.a <== a;
-   andGate.b <== b;
-   x <== andGate.out;
-
-   notgate.in <== b;
-   y <== notgate.out;
-
-   norGate.x <== x;
-   norGate.y <== y;
-   q <== norGate.out;
+    orGate.a <== x;
+    orGate.b <== y;
+    q <== orGate.out;
 
 }
-// template for AND
+
 template AND() {
     signal input a;
     signal input b;
@@ -46,21 +41,20 @@ template AND() {
 
     out <== a*b;
 }
-// template for NOT
+
 template NOT() {
     signal input in;
     signal output out;
 
     out <== 1 + in - 2*in;
 }
-// template for NOR
-template NOR() {
-    signal input x;
-    signal input y;
+
+template OR() {
+    signal input a;
+    signal input b;
     signal output out;
 
-    out <== x*y + 1 - x - y;
-
+    out <== a + b - a*b;
 }
 
 component main = CustomCircuit();
